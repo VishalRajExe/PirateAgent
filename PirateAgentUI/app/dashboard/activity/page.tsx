@@ -11,10 +11,13 @@ import {
   CargoIcon,
 } from "@/components/icons";
 import { EmptyState } from "@/components/common/empty-state";
+import { Pagination } from "@/components/common/pagination";
 import { MOCK_ACTIVITY } from "@/lib/mock-data";
 import { api } from "@/lib/api";
 import { formatRelativeTime, cn } from "@/lib/utils";
 import type { ActivityItem } from "@/lib/types";
+
+const PAGE_SIZE = 10;
 
 const ICON_MAP: Record<ActivityItem["icon"], React.ElementType> = {
   start: ShipWheelIcon,
@@ -38,6 +41,7 @@ const TONE_MAP: Record<ActivityItem["icon"], string> = {
 
 export default function ActivityPage() {
   const [activity, setActivity] = useState<ActivityItem[]>(MOCK_ACTIVITY);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     async function loadBackendActivity() {
@@ -78,6 +82,9 @@ export default function ActivityPage() {
     loadBackendActivity();
   }, []);
 
+  const totalPages = Math.ceil(activity.length / PAGE_SIZE) || 1;
+  const pagedActivity = activity.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <div className="space-y-6">
       <div>
@@ -104,7 +111,7 @@ export default function ActivityPage() {
       ) : (
         <div className="rounded-xl border border-border bg-card p-6 shadow-subtle">
           <ol className="space-y-1">
-            {activity.map((item, i) => {
+            {pagedActivity.map((item, i) => {
               const Icon = ICON_MAP[item.icon];
               const content = (
                 <div className="flex items-start gap-3.5">
@@ -117,7 +124,7 @@ export default function ActivityPage() {
                     >
                       <Icon className="h-4 w-4" />
                     </span>
-                    {i < activity.length - 1 && (
+                    {i < pagedActivity.length - 1 && (
                       <span className="mt-1 h-full min-h-[24px] w-px flex-1 bg-border/80" />
                     )}
                   </div>
@@ -145,6 +152,15 @@ export default function ActivityPage() {
               );
             })}
           </ol>
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            totalItems={activity.length}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
+            itemName="events"
+          />
         </div>
       )}
     </div>

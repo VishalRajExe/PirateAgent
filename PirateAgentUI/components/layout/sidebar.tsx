@@ -28,9 +28,9 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex h-screen w-60 shrink-0 flex-col border-r border-border bg-surface select-none">
+    <aside className="hidden md:flex sticky top-0 h-screen w-60 shrink-0 self-start flex-col border-r border-border bg-surface select-none z-20">
       {/* Brand Header */}
-      <div className="flex h-14 items-center gap-2.5 px-5 border-b border-border/60">
+      <div className="flex h-14 shrink-0 items-center gap-2.5 px-5 border-b border-border/60">
         <Link href="/" className="flex items-center gap-2.5 group">
           <Logo className="h-7 w-7 transition-transform group-hover:scale-105" />
           <span className="font-serif text-[16px] font-bold tracking-wider text-foreground">
@@ -72,7 +72,7 @@ export function Sidebar() {
       </nav>
 
       {/* Settings Navigation */}
-      <div className="px-3 pb-3 pt-2 border-t border-border/60">
+      <div className="shrink-0 px-3 pb-3 pt-2 border-t border-border/60">
         <Link
           href="/dashboard/settings"
           className={cn(

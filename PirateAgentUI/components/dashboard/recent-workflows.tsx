@@ -40,7 +40,7 @@ export function RecentWorkflows({ workflows }: { workflows: Workflow[] }) {
             >
               <div className="min-w-0">
                 <p className="truncate text-[13.5px] font-semibold text-foreground">{w.name}</p>
-                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                <p suppressHydrationWarning className="mt-0.5 text-[12px] text-muted-foreground">
                   {formatNumber(w.validRecords)} records · {formatRelativeTime(w.updatedAt)}
                 </p>
               </div>

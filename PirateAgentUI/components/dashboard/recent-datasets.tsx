@@ -43,7 +43,7 @@ export function RecentDatasets({ datasets }: { datasets: Dataset[] }) {
                   {formatNumber(d.recordCount)} records · {d.sourceCount} sources
                 </p>
               </div>
-              <span className="shrink-0 text-[12px] font-medium text-muted-foreground">
+              <span suppressHydrationWarning className="shrink-0 text-[12px] font-medium text-muted-foreground">
                 {formatRelativeTime(d.updatedAt)}
               </span>
             </Link>

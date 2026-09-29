@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const SYSTEM_PROMPT = `You are an AI data intelligence assistant. A user describes data they want to collect from the web in plain English.
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite-preview" });
 
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: `${SYSTEM_PROMPT}\n\nUser request: "${prompt.trim()}"` }] }],

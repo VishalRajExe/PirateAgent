@@ -49,9 +49,10 @@ export function PlanPreview({
         <Card className="border-border bg-card shadow-subtle">
           <CardContent className="p-5">
             <SectionLabel icon={CompassIcon} text="Detected objective" />
-            <p className="mt-2 text-[14.5px] font-medium text-foreground">
-              Collect a dataset of <span className="font-semibold text-primary underline underline-offset-4 decoration-tan/50">{contract.entity}</span> records
-              {contract.targetCount ? <> — target of <span className="font-semibold text-primary">{contract.targetCount}</span></> : null}
+            <p className="mt-2 text-[14.5px] font-medium text-foreground leading-relaxed">
+              {contract.objective
+                ? contract.objective
+                : <>Collect a dataset of{" "}<span className="font-semibold text-primary underline underline-offset-4 decoration-tan/50">{contract.entity}</span>{" "}records{contract.targetCount ? <> — target of{" "}<span className="font-semibold text-primary">{contract.targetCount}</span></> : null}</>}
             </p>
           </CardContent>
         </Card>
@@ -137,12 +138,12 @@ export function PlanPreview({
           <CardContent className="p-5">
             <SectionLabel icon={TreasureMapIcon} text="Workflow steps" />
             <ol className="mt-3 space-y-2">
-              {STAGE_TEMPLATE.map((s, i) => (
-                <li key={s.key} className="flex items-center gap-2.5 text-[13px] text-muted-foreground">
+              {(contract.workflowSteps ?? STAGE_TEMPLATE.map((s) => s.label)).map((step, i) => (
+                <li key={step} className="flex items-center gap-2.5 text-[13px] text-muted-foreground">
                   <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-[11px] font-semibold text-foreground")}>
                     {i + 1}
                   </span>
-                  <span className="font-medium text-foreground/80">{s.label}</span>
+                  <span className="font-medium text-foreground/80">{step}</span>
                 </li>
               ))}
             </ol>

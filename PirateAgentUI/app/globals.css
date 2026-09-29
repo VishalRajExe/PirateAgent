@@ -43,32 +43,32 @@
   }
 
   .dark {
-    --background: 34 10% 12%;
-    --foreground: 40 46% 93%;
-    --card: 34 10% 16%;
-    --card-foreground: 40 46% 93%;
-    --popover: 34 10% 16%;
-    --popover-foreground: 40 46% 93%;
-    --surface: 34 10% 14%;
-    --border: 34 10% 24%;
-    --input: 34 10% 28%;
-    --ring: 29 38% 55%;
-    --muted: 34 10% 20%;
-    --muted-foreground: 37 15% 65%;
-    --accent: 34 10% 22%;
-    --accent-foreground: 40 46% 93%;
-    --primary: 29 38% 55%;
-    --primary-hover: 29 42% 62%;
-    --primary-foreground: 34 10% 12%;
-    --primary-soft: 34 10% 22%;
-    --success: 141 34% 48%;
-    --success-soft: 141 30% 18%;
-    --warning: 35 66% 50%;
-    --warning-soft: 35 50% 18%;
-    --danger: 8 55% 55%;
-    --danger-soft: 8 40% 18%;
-    --info: 201 40% 50%;
-    --info-soft: 201 35% 18%;
+    --background: 222 24% 9%; /* Deep dark navy obsidian */
+    --foreground: 40 30% 94%; /* Crisp cream white */
+    --card: 222 20% 13%; /* Sleek dark card */
+    --card-foreground: 40 30% 94%;
+    --popover: 222 20% 13%;
+    --popover-foreground: 40 30% 94%;
+    --surface: 222 18% 16%; /* Sleek dark surface */
+    --border: 222 16% 22%; /* Clean dark border */
+    --input: 222 16% 22%;
+    --ring: 35 66% 50%;
+    --muted: 222 16% 18%;
+    --muted-foreground: 220 12% 65%; /* Readable secondary text */
+    --accent: 222 18% 19%;
+    --accent-foreground: 40 30% 94%;
+    --primary: 35 66% 48%; /* Warm pirate gold/tan */
+    --primary-hover: 35 70% 55%;
+    --primary-foreground: 222 24% 9%;
+    --primary-soft: 222 18% 18%;
+    --success: 142 45% 45%;
+    --success-soft: 142 35% 15%;
+    --warning: 35 75% 50%;
+    --warning-soft: 35 50% 15%;
+    --danger: 0 65% 55%;
+    --danger-soft: 0 50% 15%;
+    --info: 205 60% 50%;
+    --info-soft: 205 40% 15%;
   }
 }
 

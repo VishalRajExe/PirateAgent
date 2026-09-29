@@ -12,6 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { useTheme } from "@/components/common/theme-provider";
+
 const THEMES = [
   { key: "light", label: "Light", icon: Sun },
   { key: "dark", label: "Dark", icon: Moon },
@@ -20,7 +22,7 @@ const THEMES = [
 
 export default function SettingsPage() {
   const router = useRouter();
-  const [theme, setTheme] = useState<(typeof THEMES)[number]["key"]>("light");
+  const { theme, setTheme } = useTheme();
   const [defaultSourceCap, setDefaultSourceCap] = useState("50");
   const [autoDedupe, setAutoDedupe] = useState(true);
 

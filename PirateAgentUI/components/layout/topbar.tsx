@@ -1,5 +1,5 @@
 "use client";
-import { Bell, User, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { User, LogOut, Settings as SettingsIcon, Sun, Moon } from "lucide-react";
 import { SpyglassIcon } from "@/components/icons";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,10 +11,13 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { NotificationsMenu } from "@/components/layout/notifications-menu";
+import { useTheme } from "@/components/common/theme-provider";
 import { useRouter } from "next/navigation";
 
 export function Topbar({ title }: { title?: string }) {
   const router = useRouter();
+  const { resolvedTheme, toggleTheme } = useTheme();
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-border bg-surface/80 backdrop-blur-md px-4 md:px-6">
@@ -26,7 +29,7 @@ export function Topbar({ title }: { title?: string }) {
         )}
       </div>
 
-      <div className="flex flex-1 items-center justify-end gap-3">
+      <div className="flex flex-1 items-center justify-end gap-2.5">
         {/* Search Field with Spyglass icon */}
         <div className="relative hidden sm:block w-full max-w-xs">
           <SpyglassIcon className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -36,14 +39,23 @@ export function Topbar({ title }: { title?: string }) {
           />
         </div>
 
-        {/* Notification Bell */}
+        {/* Dark / Light Theme Toggle */}
         <button
-          aria-label="Notifications"
-          className="relative rounded-md p-2 text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors"
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Toggle dark mode"
+          title={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          className="relative rounded-md p-2 text-muted-foreground hover:bg-surface hover:text-foreground transition-colors focus:outline-none"
         >
-          <Bell className="h-4 w-4" />
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-tan" />
+          {resolvedTheme === "dark" ? (
+            <Sun className="h-4 w-4 text-tan hover:rotate-45 transition-transform" />
+          ) : (
+            <Moon className="h-4 w-4 text-muted-foreground hover:-rotate-12 transition-transform" />
+          )}
         </button>
+
+        {/* Fixed Interactive Notifications Menu */}
+        <NotificationsMenu />
 
         {/* User Profile */}
         <DropdownMenu>

@@ -7,7 +7,7 @@ import { SpyglassIcon, CompassIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PlanPreview } from "@/components/research/plan-preview";
-import { deriveContractFromPrompt } from "@/lib/mock-data";
+import { parsePromptToContract } from "@/lib/prompt-parser";
 import { api } from "@/lib/api";
 import type { DataContract } from "@/lib/types";
 
@@ -26,13 +26,40 @@ function NewResearchInner() {
 
   useEffect(() => {
     if (stage !== "analyzing") return;
-    const t = setTimeout(() => {
-      const result = deriveContractFromPrompt(prompt);
-      setName(result.name);
-      setContract(result.contract);
-      setStage("review");
-    }, 1400);
-    return () => clearTimeout(t);
+
+    let cancelled = false;
+
+    async function analyzeWithGemini() {
+      try {
+        const res = await fetch("/api/analyze-prompt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
+
+        if (!res.ok) throw new Error(`API error ${res.status}`);
+        const data = await res.json();
+
+        if (cancelled) return;
+        if (data.success && data.contract) {
+          setName(data.contract.name);
+          setContract(data.contract);
+          setStage("review");
+          return;
+        }
+        throw new Error("No contract returned");
+      } catch (err) {
+        console.warn("Gemini API unavailable, falling back to local parser:", err);
+        if (cancelled) return;
+        const result = parsePromptToContract(prompt);
+        setName(result.name);
+        setContract(result.contract);
+        setStage("review");
+      }
+    }
+
+    analyzeWithGemini();
+    return () => { cancelled = true; };
   }, [stage, prompt]);
 
   function analyze() {

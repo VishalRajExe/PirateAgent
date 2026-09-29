@@ -27,6 +27,8 @@ export interface DataContract {
   filters: string[];
   sourceTypes: string[];
   targetCount: number;
+  objective?: string;
+  workflowSteps?: string[];
 }
 
 export interface Workflow {

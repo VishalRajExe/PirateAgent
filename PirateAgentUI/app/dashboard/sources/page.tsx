@@ -12,11 +12,14 @@ import { api } from "@/lib/api";
 import { formatRelativeTime } from "@/lib/utils";
 import type { SourceRecord, DatasetRow } from "@/lib/types";
 
-const RELIABILITY_ICON = { high: ShieldCheck, medium: ShieldAlert, low: ShieldX } as const;
+import { Pagination } from "@/components/common/pagination";
+
+const PAGE_SIZE = 8;
 const RELIABILITY_TONE = { high: "text-success", medium: "text-warning", low: "text-danger" } as const;
 
 export default function SourcesPage() {
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [active, setActive] = useState<SourceRecord | null>(null);
   const [open, setOpen] = useState(false);
   const [sources, setSources] = useState<SourceRecord[]>(MOCK_SOURCES);
@@ -88,6 +91,9 @@ export default function SourcesPage() {
     (s) => s.domain.toLowerCase().includes(query.toLowerCase()) || s.title.toLowerCase().includes(query.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+  const pagedSources = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   function openSource(s: SourceRecord) {
     setActive(s);
     setOpen(true);
@@ -117,7 +123,7 @@ export default function SourcesPage() {
           <SpyglassIcon className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setPage(1); }}
             placeholder="Search sources…"
             className="h-8 pl-8 text-[13px] bg-card border-border/80"
           />
@@ -144,7 +150,7 @@ export default function SourcesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {filtered.map((s) => {
+              {pagedSources.map((s) => {
                 const RelIcon = RELIABILITY_ICON[s.reliability];
                 return (
                   <tr
@@ -172,6 +178,16 @@ export default function SourcesPage() {
               })}
             </tbody>
           </table>
+          <div className="px-4 pb-4">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              totalItems={filtered.length}
+              pageSize={PAGE_SIZE}
+              onPageChange={setPage}
+              itemName="sources"
+            />
+          </div>
         </div>
       )}
 

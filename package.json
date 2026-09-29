@@ -32,7 +32,7 @@
     "test:all": "yarn test && yarn test:int && yarn lint:langgraph-json"
   },
   "dependencies": {
-    "@langchain/anthropic": "^1.5.8",
+    "@langchain/anthropic": "^1.5.9",
     "@langchain/core": "^1.2.9",
     "@langchain/google-genai": "^2.3.2",
     "@langchain/langgraph": "^1.4.13",

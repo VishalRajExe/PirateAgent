@@ -1,9 +1,9 @@
 {
-  "name": "data-enrichment",
-  "version": "0.0.1",
-  "description": "A starter template for building a research agent that uses a web search tool to populate a user-provided schema.",
+  "name": "pirateagent",
+  "version": "1.0.0",
+  "description": "PirateAgent - AI-Powered Data Intelligence Platform & Autonomous Research Agent.",
   "main": "src/enrichment_agent/graph.ts",
-  "author": "William Fu-Hinthorn",
+  "author": "PirateAgent Team",
   "license": "MIT",
   "private": true,
   "type": "module",

@@ -14,8 +14,8 @@
     <groupId>com.dataintelligence</groupId>
     <artifactId>ai-data-intelligence-platform</artifactId>
     <version>1.0.0</version>
-    <name>AI Data Intelligence Platform</name>
-    <description>AI-Powered Data Intelligence Platform with Dynamic Workflows</description>
+    <name>PirateAgent - AI Data Intelligence Platform</name>
+    <description>PirateAgent - Autonomous AI-Powered Data Intelligence Platform with Dynamic Multi-Agent Workflows</description>
 
     <properties>
         <java.version>21</java.version>

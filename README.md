@@ -1,329 +1,392 @@
-# LangGraph Studio Data Enrichment Template
+# 🏴‍☠️ PirateAgent — Autonomous AI Data Intelligence Platform
 
-[![CI](https://github.com/langchain-ai/data-enrichment-js/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/langchain-ai/data-enrichment-js/actions/workflows/unit-tests.yml)
-[![Integration Tests](https://github.com/langchain-ai/data-enrichment-js/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/langchain-ai/data-enrichment-js/actions/workflows/integration-tests.yml)
-[![Open in - LangGraph Studio](https://img.shields.io/badge/Open_in-LangGraph_Studio-00324d.svg?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4NS4zMzMiIGhlaWdodD0iODUuMzMzIiB2ZXJzaW9uPSIxLjAiIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHBhdGggZD0iTTEzIDcuOGMtNi4zIDMuMS03LjEgNi4zLTYuOCAyNS43LjQgMjQuNi4zIDI0LjUgMjUuOSAyNC41QzU3LjUgNTggNTggNTcuNSA1OCAzMi4zIDU4IDcuMyA1Ni43IDYgMzIgNmMtMTIuOCAwLTE2LjEuMy0xOSAxLjhtMzcuNiAxNi42YzIuOCAyLjggMy40IDQuMiAzLjQgNy42cy0uNiA0LjgtMy40IDcuNkw0Ny4yIDQzSDE2LjhsLTMuNC0zLjRjLTQuOC00LjgtNC44LTEwLjQgMC0xNS4ybDMuNC0zLjRoMzAuNHoiLz48cGF0aCBkPSJNMTguOSAyNS42Yy0xLjEgMS4zLTEgMS43LjQgMi41LjkuNiAxLjcgMS44IDEuNyAyLjcgMCAxIC43IDIuOCAxLjYgNC4xIDEuNCAxLjkgMS40IDIuNS4zIDMuMi0xIC42LS42LjkgMS40LjkgMS41IDAgMi43LS41IDIuNy0xIDAtLjYgMS4xLS44IDIuNi0uNGwyLjYuNy0xLjgtMi45Yy01LjktOS4zLTkuNC0xMi4zLTExLjUtOS44TTM5IDI2YzAgMS4xLS45IDIuNS0yIDMuMi0yLjQgMS41LTIuNiAzLjQtLjUgNC4yLjguMyAyIDEuNyAyLjUgMy4xLjYgMS41IDEuNCAyLjMgMiAyIDEuNS0uOSAxLjItMy41LS40LTMuNS0yLjEgMC0yLjgtMi44LS44LTMuMyAxLjYtLjQgMS42LS41IDAtLjYtMS4xLS4xLTEuNS0uNi0xLjItMS42LjctMS43IDMuMy0yLjEgMy41LS41LjEuNS4yIDEuNi4zIDIuMiAwIC43LjkgMS40IDEuOSAxLjYgMi4xLjQgMi4zLTIuMy4yLTMuMi0uOC0uMy0yLTEuNy0yLjUtMy4xLTEuMS0zLTMtMy4zLTMtLjUiLz48L3N2Zz4=)](https://langgraph-studio.vercel.app/templates/open?githubUrl=https://github.com/langchain-ai/data-enrichment-js)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.4-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=flat&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![LangGraph](https://img.shields.io/badge/LangGraph.js-1.4+-1C3C3C?style=flat&logo=langchain&logoColor=white)](https://langchain-ai.github.io/langgraphjs/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-3.1_Flash-4285F4?style=flat&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Tavily Search](https://img.shields.io/badge/Tavily-Search_API-blueviolet?style=flat)](https://tavily.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Producing structured results (e.g., to populate a database or spreadsheet) from open-ended research (e.g., web research) is a common use case that LLM-powered agents are well-suited to handle. Here, we provide a general template for this kind of "data enrichment agent" agent using [LangGraph](https://github.com/langchain-ai/langgraph) in [LangGraph Studio](https://github.com/langchain-ai/langgraph-studio). It contains an example graph exported from `src/enrichment_agent/graph.ts` that implements a research assistant capable of automatically gathering information on various topics from the web and structuring the results into a user-defined JSON format.
+> **PirateAgent** is an enterprise-grade autonomous data intelligence and web extraction platform. Powered by Google Gemini AI, LangGraph multi-agent workflows, and a Spring Boot + Next.js architecture, PirateAgent translates natural language prompts into verified, structured datasets with verifiable web source citations, deduplication, quality scoring, and multi-format exports.
 
-![Overview of agent](./static/overview.png)
+---
 
-![](/static/studio.png)
+## 📑 Table of Contents
 
-# What it does
+- [Overview](#-overview)
+- [System Architecture](#-system-architecture)
+- [Workflow & Pipeline Flow](#-workflow--pipeline-flow)
+- [State Machine & Task Lifecycle](#-state-machine--task-lifecycle)
+- [Tech Stack](#-tech-stack)
+- [Key Features](#-key-features)
+- [Repository Structure](#-repository-structure)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Environment Configuration](#environment-configuration)
+  - [Running the Services](#running-the-services)
+- [API Reference](#-api-reference)
+- [Branch Protection Guide](#-branch-protection-guide)
+- [License](#-license)
 
-The enrichment agent defined in `src/enrichment_agent/graph.ts` performs the following steps:
+---
 
-1. Takes a research **topic** and requested **extractionSchema** as input.
-2. Searches the web for relevant information
-3. Reads and extracts key details from websites
-4. Organizes the findings into the requested structured format
-5. Validates the gathered information for completeness and accuracy
+## 🔭 Overview
 
-![Graph view in LangGraph studio UI](./static/studio.png)
+Traditional web scraping requires brittle selector maintenance, custom regex, and rigid schema setups. **PirateAgent** eliminates this complexity through autonomous multi-agent coordination:
 
-## Getting Started
+1. **Natural Language Understanding**: A business user types an objective in plain English (e.g., *"Find all B2B cybersecurity SaaS startups in Europe with Series A funding in 2025"*).
+2. **Dynamic Schema & Strategy Synthesis**: The platform's AI reasoning engine extracts the target entity, generates a strongly-typed schema, creates search queries, and establishes permitted source scopes.
+3. **Autonomous Web Discovery & Extraction**: Targeted searches retrieve authorized source documents, extract structured records, and validate fields.
+4. **Data Hygiene & Provenance**: Deduplication, quality confidence scoring, and source attribution are performed before structuring the final dataset.
+5. **Exploration & Export**: Results are browsable through an interactive UI with pagination, sorting, search, and one-click CSV / JSON export.
 
-You will need the latest versions of `@langchain/langgraph` and `@langchain/core`. See these instructions for help upgrading an [existing project](https://langchain-ai.github.io/langgraphjs/how-tos/manage-ecosystem-dependencies/).
+---
 
-Assuming you have already [installed LangGraph Studio](https://github.com/langchain-ai/langgraph-studio?tab=readme-ov-file#download), to set up:
+## 🏛 System Architecture
 
-1. Create a `.env` file.
+The following diagram illustrates the three-tier microservice architecture powering PirateAgent:
 
+```mermaid
+graph TB
+    subgraph ClientLayer["🖥️ Frontend Client Tier (Port 3000)"]
+        UI["PirateAgent UI (Next.js 14 App Router)"]
+        Landing["Landing Page (/)"]
+        Dashboard["Mission Control (/dashboard)"]
+        LiveView["Live Workflow Stream (/workflows/live)"]
+        Explorer["Dataset Explorer (/datasets)"]
+        PromptRoute["API Proxy (/api/analyze-prompt)"]
+    end
+
+    subgraph GatewayLayer["⚙️ Core API Gateway Tier (Port 8080)"]
+        SpringBoot["Spring Boot 3.3 Gateway"]
+        TaskCtrl["Task & Workflow Controller"]
+        DatasetCtrl["Dataset & Export Controller"]
+        WorkflowEng["Workflow Execution Engine"]
+        H2DB[("In-Memory H2 Database / JPA")]
+    end
+
+    subgraph AgentLayer["🤖 Agent Orchestration Tier (Port 2024)"]
+        LangGraph["LangGraph.js Engine"]
+        Gateway["HTTP Gateway & Proxy Server"]
+        EnrichAgent["Enrichment Graph Node"]
+        SearchTools["Research & Extraction Tools"]
+    end
+
+    subgraph ExternalServices["☁️ External AI & Search Providers"]
+        Gemini["Google Gemini 3.1 Flash / 2.5"]
+        Tavily["Tavily Search API"]
+    end
+
+    UI --> Landing
+    UI --> Dashboard
+    Dashboard --> LiveView
+    Dashboard --> Explorer
+    PromptRoute --> Gemini
+
+    UI -- "REST / Proxy (:3000 -> :8080)" --> TaskCtrl
+    TaskCtrl --> WorkflowEng
+    DatasetCtrl --> WorkflowEng
+    WorkflowEng --> H2DB
+
+    WorkflowEng --> Gemini
+    WorkflowEng --> Tavily
+    WorkflowEng -- "Agent Calls" --> Gateway
+    Gateway --> LangGraph
+    LangGraph --> EnrichAgent
+    EnrichAgent --> SearchTools
+    SearchTools --> Tavily
+```
+
+---
+
+## 🔄 Workflow & Pipeline Flow
+
+The sequence below details how a plain-English request is synthesized into a verified dataset:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 User / Captain
+    participant UI as 🧭 PirateAgent UI (:3000)
+    participant API as ⚙️ Spring Boot API (:8080)
+    participant Gemini as 🧠 Google Gemini AI
+    participant Tavily as 🌐 Tavily Search API
+    participant DB as 💾 Repository / DB
+
+    User->>UI: Input prompt: "Find top AI chip startups in 2025"
+    UI->>UI: Analyze prompt via /api/analyze-prompt
+    UI->>Gemini: Zero-shot schema & objective inference
+    Gemini-->>UI: Structured DataContract (Entity, Schema, Sources)
+    UI-->>User: Editable Plan Preview (Fields, Sources, Target count)
+    
+    User->>UI: Confirm & Click "Launch Expedition"
+    UI->>API: POST /api/tasks (Prompt + Permitted Scope)
+    API->>DB: Save Task [STATUS: PENDING]
+    
+    API->>Gemini: Synthesize workflow plan & targeted queries
+    Gemini-->>API: 3-4 Strategic queries + Field definitions
+    API->>DB: Update Task [STATUS: PLANNING]
+    
+    API->>Tavily: Execute search queries within permitted domains
+    Tavily-->>API: Raw search results & webpage snippets
+    API->>DB: Update Task [STATUS: SEARCHING]
+    
+    API->>Gemini: Extract structured records with field mapping
+    Gemini-->>API: Extracted JSON candidate records
+    API->>DB: Update Task [STATUS: EXTRACTING]
+    
+    API->>API: Run deduplication & quality confidence scoring
+    API->>DB: Persist Dataset & Citation Sources [STATUS: COMPLETED]
+    
+    API-->>UI: Real-time SSE / Log stream updates
+    UI-->>User: Mission Complete! Explore Dataset & Export (CSV/JSON)
+```
+
+---
+
+## 📊 State Machine & Task Lifecycle
+
+Every research mission follows a deterministic state machine managed by the backend engine:
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: User submits prompt
+    PENDING --> PLANNING: Engine initializes task
+    PLANNING --> SEARCHING: Schema & search queries synthesized
+    SEARCHING --> EXTRACTING: Permitted sources retrieved
+    EXTRACTING --> DEDUPLICATING: Records extracted via Gemini
+    DEDUPLICATING --> COMPLETED: Deduplication & scoring finished
+    
+    PLANNING --> FAILED: Gemini API failure / Invalid prompt
+    SEARCHING --> FAILED: Network / Search error
+    EXTRACTING --> FAILED: Unrecoverable parse error
+    
+    COMPLETED --> [*]: Ready for inspection & export
+    FAILED --> [*]: Error logged to activity stream
+```
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend Application (`PirateAgentUI`)
+| Technology | Version | Purpose |
+|---|---|---|
+| **Next.js** | 14.2.x (App Router) | React server components, static generation, dynamic API routes |
+| **React** | 18.3.x | Client-side reactive UI components and hooks |
+| **TypeScript** | 5.x | End-to-end type safety across contracts, entities, and responses |
+| **Tailwind CSS** | 3.4.x | Design token utility system supporting warm parchment and dark ocean palettes |
+| **Lucide Icons** | 0.446.x | Clean interface iconography |
+| **Custom SVG Icons** | — | Pirate-themed nautical assets (Compass, Spyglass, ShipWheel, TreasureChest, etc.) |
+
+### Backend API Server (`backend`)
+| Technology | Version | Purpose |
+|---|---|---|
+| **Java** | 21 (LTS) | Modern Java runtime with virtual threads and pattern matching |
+| **Spring Boot** | 3.3.4 | Core REST API gateway, dependency injection, embedded Tomcat |
+| **Spring Data JPA** | 3.3.4 | Object-relational mapping and repository abstraction |
+| **Hibernate ORM** | 6.5.x | Persistence layer management and schema generation |
+| **H2 Database** | 2.x | High-speed in-memory database with `/h2-console` inspector |
+| **HikariCP** | 5.1.x | High-performance JDBC connection pooling |
+| **Jackson** | 2.17.x | High-throughput JSON serialization, streaming, and schema binding |
+| **Apache Maven** | 3.9+ | Multi-phase build, packaging, and dependency management |
+
+### Agentic Intelligence & Orchestration
+| Technology | Version | Purpose |
+|---|---|---|
+| **LangGraph.js** | 1.4+ | Multi-agent state graph orchestration, looping, and human-in-the-loop nodes |
+| **LangChain Core** | 1.2+ | Standardized LLM primitives, prompts, and runnables |
+| **Google Gemini** | 3.1 Flash / 2.5 | Fast structured JSON output, zero-shot entity extraction, and prompt synthesis |
+| **Tavily Search** | 1.2+ | Domain-filtered, citation-backed web discovery engine |
+| **Node.js / tsx** | 20+ | TypeScript execution environment for agent scripts and gateway |
+
+---
+
+## ✨ Key Features
+
+- **🧠 Zero-Shot Natural Language Prompt Understanding**:
+  Type any data request into the prompt studio. Gemini AI automatically determines the entity type, generates schema fields, sets required/optional constraints, and selects permitted sources.
+- **⚡ Real-Time Pipeline Stream**:
+  Track every operational step live: intent parsing, domain searching, LLM extraction, deduplication, and completion.
+- **🛡️ Full Source Attribution & Provenance**:
+  Every record links back to its verified web source with domain verification, reliability ratings, and citation snippets.
+- **📄 Comprehensive Pagination**:
+  Built-in pagination across all dashboard labels (Workflows, Datasets, Sources, History, and Activity) ensures fast load times and clean navigation.
+- **🗑️ Delete & Rerun Controls**:
+  One-click task and dataset management with spinner feedback and backend synchronization.
+- **🌗 Light & Dark Theme Support**:
+  Defaults to a warm parchment light mode with a smooth dark ocean theme toggle persisted via `localStorage`.
+- **📦 Multi-Format Data Export**:
+  Download datasets in CSV and JSON formats with custom file naming and data sanitation.
+
+---
+
+## 📂 Repository Structure
+
+```
+PirateAgent/
+├── PirateAgentUI/                     # Next.js 14 Frontend Application
+│   ├── app/
+│   │   ├── (auth)/                    # Login and Signup pages
+│   │   ├── api/analyze-prompt/        # Gemini AI prompt analysis API route
+│   │   ├── dashboard/                 # Mission Control application pages
+│   │   │   ├── activity/              # Live activity feed with pagination
+│   │   │   ├── datasets/              # Datasets overview and record tables
+│   │   │   ├── history/               # Historical expedition runs and reruns
+│   │   │   ├── research/new/          # Mission configuration and prompt analyzer
+│   │   │   ├── sources/               # Source reliability and domain explorer
+│   │   │   ├── workflows/             # Active and past workflow management
+│   │   │   └── settings/              # Captain profile and theme configuration
+│   │   ├── layout.tsx                 # Root layout with theme provider
+│   │   └── page.tsx                   # Animated PirateAgent landing page
+│   ├── components/                    # Modular UI components
+│   │   ├── common/                    # Logo, Pagination, ThemeProvider, EmptyState
+│   │   ├── dataset/                   # DataTable, ExportMenu, SourceDrawer
+│   │   ├── layout/                    # Sidebar, Topbar, NotificationsMenu
+│   │   └── icons/                     # Pirate and nautical SVG icon library
+│   └── lib/                           # API client, types, mock data, and utilities
+│
+├── backend/                           # Spring Boot 3.3 Java Backend
+│   ├── src/main/java/com/dataintelligence/
+│   │   ├── controller/                # REST API controllers
+│   │   ├── dto/                       # Data transfer objects
+│   │   ├── model/                     # JPA entity definitions
+│   │   ├── repository/                # Spring Data JPA repositories
+│   │   └── service/                   # WorkflowEngine, GeminiService, ExportService
+│   ├── src/main/resources/
+│   │   ├── static/                    # Static gateway portal & auto-redirect
+│   │   └── application.properties     # Database, server, and API configurations
+│   └── pom.xml                        # Maven dependencies and build configuration
+│
+├── src/enrichment_agent/              # LangGraph.js Agent Graph
+│   ├── graph.ts                       # State graph definition and node transitions
+│   ├── state.ts                       # Graph state channels and schema types
+│   ├── configuration.ts               # Runtime agent configuration
+│   └── tools.ts                       # Web search and content extraction tools
+│
+├── scripts/
+│   └── server.ts                      # LangGraph development gateway & proxy server
+├── .env.example                       # Example environment variable template
+├── package.json                       # Root workspace scripts and dependencies
+└── README.md                          # Platform documentation
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have the following installed on your system:
+- **Node.js**: v18.18.0 or higher (v20+ recommended)
+- **Java Development Kit (JDK)**: Java 21 LTS
+- **Apache Maven**: 3.8+ (or use `./mvnw`)
+- **Git**
+
+### Environment Configuration
+
+1. In the repository root, create a `.env` file:
+```env
+# Tavily Search API Key (Get free key at https://app.tavily.com)
+TAVILY_API_KEY=tvly-your-tavily-api-key
+
+# Google Gemini API Key (Get key at https://aistudio.google.com)
+GEMINI_API_KEY=your-gemini-api-key
+GOOGLE_API_KEY=your-gemini-api-key
+
+# Optional LangSmith Tracing
+LANGCHAIN_PROJECT=pirate-agent
+```
+
+2. In the `PirateAgentUI/` directory, create a `.env.local` file:
+```env
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+---
+
+### Running the Services
+
+PirateAgent consists of three cooperating services:
+
+#### 1. Start the Spring Boot Backend (Port 8080)
 ```bash
-cp .env.example .env
+# Package the Spring Boot JAR (skipping unit tests for fast build)
+mvn -f backend/pom.xml package -DskipTests
+
+# Run the packaged executable JAR
+java -jar backend/target/ai-data-intelligence-platform-1.0.0.jar
 ```
+*Health Check*: `http://localhost:8080/api/tasks`  
+*H2 Console*: `http://localhost:8080/h2-console`
 
-2. Define required API keys in your `.env` file.
-
-The primary [search tool](./src/enrichment_agent/tools.ts) [^1] used is [Tavily](https://tavily.com/). Create an API key [here](https://app.tavily.com/sign-in).
-
-<!--
-Setup instruction auto-generated by `langgraph template lock`. DO NOT EDIT MANUALLY.
--->
-
-<details>
-<summary>Setup for `model`</summary>
-The `llm` configuration defaults are shown below:
-
-```yaml
-model: anthropic/claude-3-5-sonnet-20240620
+#### 2. Start the LangGraph Agent Engine (Port 2024)
+```bash
+# In the repository root
+yarn install
+npx yarn dev
 ```
+*Health Check*: `http://127.0.0.1:2024/ok`  
+*Dashboard & Studio Bridge*: `http://127.0.0.1:2024`
 
-Follow the instructions below to get set up, or pick one of the additional options.
-
-### Anthropic Chat Models
-
-To use Anthropic's chat models:
-
-1. Sign up for an [Anthropic API key](https://console.anthropic.com/) if you haven't already.
-2. Once you have your API key, add it to your `.env` file:
-
+#### 3. Start the Next.js Frontend (Port 3000)
+```bash
+# In the PirateAgentUI directory
+cd PirateAgentUI
+npm install
+npm run dev
 ```
-ANTHROPIC_API_KEY=your-api-key
-```
+*Access Application*: [http://localhost:3000](http://localhost:3000)
 
-### Fireworks Chat Models
+---
 
-To use Fireworks AI's chat models:
+## 📡 API Reference
 
-1. Sign up for a [Fireworks AI account](https://app.fireworks.ai/signup) and obtain an API key.
-2. Add your Fireworks AI API key to your `.env` file:
+The Spring Boot backend exposes REST endpoints under `/api`:
 
-```
-FIREWORKS_API_KEY=your-api-key
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/tasks` | Create and initiate a new data intelligence research task |
+| `GET` | `/api/tasks` | Retrieve all active and completed tasks |
+| `GET` | `/api/tasks/{id}` | Fetch task execution status, logs, and progress |
+| `DELETE` | `/api/tasks/{id}` | Delete a task and its associated dataset |
+| `POST` | `/api/tasks/{id}/rerun` | Re-trigger an existing workflow with original parameters |
+| `GET` | `/api/tasks/{id}/dataset` | Retrieve structured records and source citations |
+| `GET` | `/api/tasks/{id}/export?format={csv\|json}` | Download dataset in CSV or JSON format |
+| `GET` | `/api/templates` | Retrieve instant business requirement presets |
 
-#### OpenAI Chat Models
+### Next.js Internal AI Endpoint:
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/analyze-prompt` | Analyzes arbitrary natural language prompts via Gemini AI |
 
-To use OpenAI's chat models:
+---
 
-1. Sign up for an [OpenAI API key](https://platform.openai.com/signup).
-2. Once you have your API key, add it to your `.env` file:
+## 🔒 Branch Protection Guide
 
-```
-OPENAI_API_KEY=your-api-key
-```
+To protect the `main` branch from accidental force pushes or deletions:
 
-</details>
+1. Open your repository on GitHub:
+   [https://github.com/VishalRajExe/PirateAgent/settings/branches](https://github.com/VishalRajExe/PirateAgent/settings/branches)
+2. Click **Add branch protection rule** (or **Add ruleset**).
+3. Under **Branch name pattern**, enter:
+   ```
+   main
+   ```
+4. Enable the recommended protection options:
+   - ✅ **Require a pull request before merging**
+   - ✅ **Require status checks to pass before merging**
+   - ✅ **Block force pushes** (prevents `git push --force`)
+   - ✅ **Prevent branch deletion** (prevents deleting `main`)
+5. Click **Save changes** (or **Create**).
 
-<!--
-End setup instructions
--->
+---
 
-3. Consider a research topic and desired extraction schema.
+## 📄 License
 
-As an example, here is a research topic we can consider:
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
-```
-"Autonomous agents"
-```
-
-With an `extractionSchema` of:
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "facts": {
-      "type": "array",
-      "description": "An array of facts retrieved from the provided sources",
-      "items": {
-        "type": "string"
-      }
-    }
-  },
-  "required": ["facts"]
-}
-```
-
-Another example topic with a more complex schema is:
-
-```
-"Top 5 chip providers for LLM Training"
-```
-
-And here is a desired `extractionSchema`:
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "companies": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Company name"
-          },
-          "technologies": {
-            "type": "string",
-            "description": "Brief summary of key technologies used by the company"
-          },
-          "market_share": {
-            "type": "string",
-            "description": "Overview of market share for this company"
-          },
-          "future_outlook": {
-            "type": "string",
-            "description": "Brief summary of future prospects and developments in the field for this company"
-          },
-          "key_powers": {
-            "type": "string",
-            "description": "Which of the 7 Powers (Scale Economies, Network Economies, Counter Positioning, Switching Costs, Branding, Cornered Resource, Process Power) best describe this company's competitive advantage"
-          }
-        },
-        "required": ["name", "technologies", "market_share", "future_outlook"]
-      },
-      "description": "List of companies"
-    }
-  },
-  "required": ["companies"]
-}
-```
-
-4. Open the folder LangGraph Studio, and input `topic` and `extractionSchema`.
-
-## How to customize
-
-1. **Customize research targets**: Provide a custom JSON `extractionSchema` when calling the graph to gather different types of information.
-2. **Select a different model**: We default to anthropic (`claude-3-5-sonnet-20240620`). You can select a compatible chat model using `provider/model-name` via configuration. Example: `openai/gpt-4o-mini`.
-3. **Customize the prompt**: We provide a default prompt in [src/enrichment_agent/prompts.ts](./src/enrichment_agent/prompts.ts). You can easily update this via configuration.
-
-For quick prototyping, these configurations can be set in the studio UI.
-
-![Config In Studio](./static/config.png)
-
-You can also quickly extend this template by:
-
-- Adding new tools and API connections in [src/enrichment_agent/tools.ts](./src/enrichment_agent/tools.ts). These are just any TypeScript functions.
-- Adding additional steps in [src/enrichment_agent/graph.ts](./src/enrichment_agent/graph.ts).
-
-## Development
-
-While iterating on your graph, you can edit past state and rerun your app from past states to debug specific nodes. Local changes will be automatically applied via hot reload. Try adding an interrupt before the agent calls tools, updating the default system message in [src/enrichment_agent/utils.ts](./src/enrichment_agent/utils.ts) to take on a persona, or adding additional nodes and edges!
-
-Follow up requests will be appended to the same thread. You can create an entirely new thread, clearing previous history, using the `+` button in the top right.
-
-You can find the latest (under construction) docs on [LangGraph.js](https://langchain-ai.github.io/langgraphjs/) here, including examples and other references. Using those guides can help you pick the right patterns to adapt here for your use case.
-
-LangGraph Studio also integrates with [LangSmith](https://smith.langchain.com/) for more in-depth tracing and collaboration with teammates.
-
-[^1]: https://js.langchain.com/docs/concepts#tools
-
-<!--
-Configuration auto-generated by `langgraph template lock`. DO NOT EDIT MANUALLY.
-{
-  "config_schemas": {
-    "agent": {
-      "type": "object",
-      "properties": {
-        "model": {
-          "type": "string",
-          "default": "anthropic/claude-3-5-sonnet-20240620",
-          "description": "The name of the language model to use for the agent. Should be in the form: provider/model-name.",
-          "environment": [
-            {
-              "value": "anthropic/claude-1.2",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-2.0",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-2.1",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-5-sonnet-20240620",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-haiku-20240307",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-opus-20240229",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-sonnet-20240229",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-instant-1.2",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-0125",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-0301",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-1106",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-16k",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-16k-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-0125-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-0314",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-1106-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-32k",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-32k-0314",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-32k-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-turbo",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-turbo-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-vision-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4o",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4o-mini",
-              "variables": "OPENAI_API_KEY"
-            }
-          ]
-        }
-      },
-      "environment": [
-        "TAVILY_API_KEY"
-      ]
-    }
-  }
-}
--->
+Developed and maintained with precision by the **PirateAgent Team**.

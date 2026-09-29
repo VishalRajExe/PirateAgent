@@ -62,15 +62,15 @@ export function Topbar({ title }: { title?: string }) {
           <DropdownMenuTrigger className="outline-none">
             <Avatar className="h-8 w-8 cursor-pointer border border-border bg-card">
               <AvatarFallback className="bg-card text-foreground text-xs font-semibold">
-                VR
+                PA
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-card border-border shadow-md">
             <DropdownMenuLabel>
               <div className="flex flex-col">
-                <span className="text-foreground font-semibold">Vishal Raj</span>
-                <span className="font-normal text-muted-foreground text-xs">vishal@pirateagent.ai</span>
+                <span className="text-foreground font-semibold">Captain Navigator</span>
+                <span className="font-normal text-muted-foreground text-xs">captain@pirateagent.ai</span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-border/60" />

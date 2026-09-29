@@ -40,7 +40,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email</Label>
-              <Input id="email" type="email" placeholder="you@company.com" defaultValue="vishal@pirateagent.ai" required className="bg-surface/50 border-border text-foreground" />
+              <Input id="email" type="email" placeholder="captain@pirateagent.ai" required className="bg-surface/50 border-border text-foreground" />
             </div>
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">

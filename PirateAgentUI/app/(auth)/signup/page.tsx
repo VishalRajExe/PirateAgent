@@ -40,7 +40,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="name" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Full name</Label>
-              <Input id="name" placeholder="Vishal Raj" required className="bg-surface/50 border-border text-foreground" />
+              <Input id="name" placeholder="Jane Doe" required className="bg-surface/50 border-border text-foreground" />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email</Label>

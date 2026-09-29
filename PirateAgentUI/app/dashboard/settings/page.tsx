@@ -55,22 +55,22 @@ export default function SettingsPage() {
             <CardContent className="space-y-5 p-5">
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 border border-border bg-surface">
-                  <AvatarFallback className="text-base font-serif font-bold text-foreground">VR</AvatarFallback>
+                  <AvatarFallback className="text-base font-serif font-bold text-foreground">PA</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold text-[15px] text-foreground">Vishal Raj</p>
-                  <p className="text-[12.5px] text-muted-foreground">vishal@pirateagent.ai</p>
+                  <p className="font-semibold text-[15px] text-foreground">Captain Navigator</p>
+                  <p className="text-[12.5px] text-muted-foreground">captain@pirateagent.ai</p>
                 </div>
               </div>
               <Separator className="bg-border/60" />
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="fullname" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Full name</Label>
-                  <Input id="fullname" defaultValue="Vishal Raj" className="bg-surface/50 border-border text-foreground" />
+                  <Input id="fullname" defaultValue="Captain Navigator" className="bg-surface/50 border-border text-foreground" />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email</Label>
-                  <Input id="email" type="email" defaultValue="vishal@pirateagent.ai" className="bg-surface/50 border-border text-foreground" />
+                  <Input id="email" type="email" defaultValue="captain@pirateagent.ai" className="bg-surface/50 border-border text-foreground" />
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-1">

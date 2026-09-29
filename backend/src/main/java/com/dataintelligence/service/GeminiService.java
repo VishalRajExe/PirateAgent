@@ -126,7 +126,7 @@ public class GeminiService {
     }
 
     private String callGemini(String prompt) throws Exception {
-        List<String> modelsToTry = List.of(modelName, "gemini-2.5-flash-lite", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.5-flash");
+        List<String> modelsToTry = List.of("gemini-3.1-flash-lite-preview", "gemini-3.1-flash-lite", modelName, "gemini-flash-latest", "gemini-2.5-flash");
         Exception lastException = null;
 
         for (String candidateModel : modelsToTry) {

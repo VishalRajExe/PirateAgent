@@ -16,8 +16,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, activeT
             <Sparkles size={22} color="#ffffff" />
           </div>
           <div>
-            <div className="brand-title">OmniData AI</div>
-            <div className="brand-subtitle">Autonomous Data Intelligence Platform</div>
+            <div className="brand-title">PirateAgent</div>
+            <div className="brand-subtitle">AI-Powered Data Intelligence Platform</div>
           </div>
         </div>
 

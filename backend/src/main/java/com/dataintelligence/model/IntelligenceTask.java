@@ -18,6 +18,9 @@ public class IntelligenceTask {
     @Column(nullable = false)
     private String status; // PENDING, PLANNING, SEARCHING, EXTRACTING, DEDUPLICATING, COMPLETED, FAILED
 
+    @Column(name = "user_id", length = 100)
+    private String userId = "captain";
+
     private int progress; // 0 to 100
 
     private String currentStep;
@@ -55,6 +58,9 @@ public class IntelligenceTask {
     // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public String getUserPrompt() { return userPrompt; }
     public void setUserPrompt(String userPrompt) { this.userPrompt = userPrompt; }

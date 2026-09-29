@@ -2,26 +2,18 @@
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { getWorkflow, MOCK_ACTIVITY } from "@/lib/mock-data";
 import { WorkflowRunView } from "@/components/workflow/workflow-run-view";
 import { api, taskToWorkflow } from "@/lib/api";
 import type { Workflow } from "@/lib/types";
 
 export default function WorkflowDetailPage({ params }: { params: { id: string } }) {
-  const [workflow, setWorkflow] = useState<Workflow | null>(() => getWorkflow(params.id) || null);
-  const [logs, setLogs] = useState<{ id: string; text: string; timestamp: string }[]>(() => {
-    return MOCK_ACTIVITY.filter((a) => a.workflowId === params.id).map((a) => ({
-      id: a.id,
-      text: a.text,
-      timestamp: a.timestamp,
-    }));
-  });
-  const [loading, setLoading] = useState(!workflow);
+  const [workflow, setWorkflow] = useState<Workflow | null>(null);
+  const [logs, setLogs] = useState<{ id: string; text: string; timestamp: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (workflow) return;
-
     async function loadTask() {
+      setLoading(true);
       try {
         const task = await api.getTask(params.id);
         if (task) {
@@ -37,15 +29,18 @@ export default function WorkflowDetailPage({ params }: { params: { id: string } 
               ? taskLogs
               : [{ id: "l0", text: "Workflow created", timestamp: task.createdAt }]
           );
+        } else {
+          setWorkflow(null);
         }
       } catch (err) {
         console.warn("Could not fetch task", params.id, err);
+        setWorkflow(null);
       } finally {
         setLoading(false);
       }
     }
     loadTask();
-  }, [params.id, workflow]);
+  }, [params.id]);
 
   if (loading) {
     return (

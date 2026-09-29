@@ -2,6 +2,7 @@ package com.dataintelligence.service;
 
 import com.dataintelligence.dto.DatasetDetailResponse;
 import com.dataintelligence.dto.FieldDefinitionDto;
+import com.dataintelligence.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class ExportService {
 
     public String exportToCsv(String taskId) {
         DatasetDetailResponse dataset = taskService.getDatasetByTaskId(taskId)
-                .orElseThrow(() -> new RuntimeException("Dataset not found for task: " + taskId));
+                .orElseThrow(() -> new ResourceNotFoundException("Dataset not found for task: " + taskId));
 
         StringBuilder csv = new StringBuilder();
         List<FieldDefinitionDto> schema = dataset.getSchema();
@@ -52,7 +53,7 @@ public class ExportService {
 
     public String exportToJson(String taskId) {
         DatasetDetailResponse dataset = taskService.getDatasetByTaskId(taskId)
-                .orElseThrow(() -> new RuntimeException("Dataset not found for task: " + taskId));
+                .orElseThrow(() -> new ResourceNotFoundException("Dataset not found for task: " + taskId));
 
         try {
             // Build a clean, serializable map to avoid JPA circular reference issues on SourceCitation

@@ -1,16 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { SpyglassIcon, CompassIcon } from "@/components/icons";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { EXAMPLE_PROMPTS } from "@/lib/mock-data";
+import { api } from "@/lib/api";
+
+const DEFAULT_SUGGESTIONS = [
+  "Find 50 B2B fintech startups in Bangalore with founders and funding",
+  "Discover top AI research labs in San Francisco with research focus",
+];
 
 export function PromptBox() {
   const router = useRouter();
   const [value, setValue] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>(DEFAULT_SUGGESTIONS);
+
+  useEffect(() => {
+    api.getTemplates().then((templates) => {
+      if (templates && templates.length > 0) {
+        setSuggestions(templates.map((t) => t.prompt));
+      }
+    }).catch(() => {});
+  }, []);
 
   function run(promptOverride?: string) {
     const prompt = promptOverride ?? value;
@@ -60,7 +74,7 @@ export function PromptBox() {
               <span className="text-[11.5px] font-medium text-muted-foreground/80 hidden sm:inline mr-1">
                 Suggestions:
               </span>
-              {EXAMPLE_PROMPTS.slice(0, 2).map((p) => (
+              {suggestions.slice(0, 2).map((p) => (
                 <button
                   key={p}
                   type="button"

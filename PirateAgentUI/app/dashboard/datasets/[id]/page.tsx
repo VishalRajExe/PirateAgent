@@ -10,7 +10,6 @@ import { ExportMenu } from "@/components/dataset/export-menu";
 import { DataTable, type SortState } from "@/components/dataset/data-table";
 import { SourceDrawer } from "@/components/dataset/source-drawer";
 import { EmptyState } from "@/components/common/empty-state";
-import { getDataset, getSourcesFor } from "@/lib/mock-data";
 import { api, backendDatasetToUi } from "@/lib/api";
 import { formatDate, formatNumber } from "@/lib/utils";
 import type { Dataset, DatasetRow, SourceRecord } from "@/lib/types";
@@ -19,9 +18,9 @@ const PAGE_SIZE = 10;
 
 export default function DatasetDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [dataset, setDataset] = useState<Dataset | null>(() => getDataset(params.id) || null);
+  const [dataset, setDataset] = useState<Dataset | null>(null);
   const [extraSources, setExtraSources] = useState<SourceRecord[]>([]);
-  const [loading, setLoading] = useState(!dataset);
+  const [loading, setLoading] = useState(true);
 
   const [query, setQuery] = useState("");
   const [confidenceFilter, setConfidenceFilter] = useState<"all" | "high" | "medium" | "low">("all");
@@ -32,9 +31,8 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    if (dataset) return;
-
     async function fetchBackendDataset() {
+      setLoading(true);
       try {
         const [backendDs, task] = await Promise.all([
           api.getDataset(params.id),
@@ -58,16 +56,19 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
             snippet: s.snippet,
           }));
           setExtraSources(sourcesList);
+        } else {
+          setDataset(null);
         }
       } catch (err) {
         console.warn("Could not load backend dataset", params.id, err);
+        setDataset(null);
       } finally {
         setLoading(false);
       }
     }
 
     fetchBackendDataset();
-  }, [params.id, dataset]);
+  }, [params.id]);
 
   const filtered = useMemo(() => {
     if (!dataset) return [];
@@ -132,10 +133,7 @@ export default function DatasetDetailPage({ params }: { params: { id: string } }
   const exportRows = selectedRows.length > 0 ? selectedRows : filtered;
 
   const currentSources = activeRow
-    ? [
-        ...getSourcesFor(activeRow.sourceIds),
-        ...extraSources.filter((s) => activeRow.sourceIds.includes(s.id)),
-      ]
+    ? extraSources.filter((s) => activeRow.sourceIds.includes(s.id))
     : [];
 
   return (

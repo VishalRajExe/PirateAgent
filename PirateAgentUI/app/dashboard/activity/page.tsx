@@ -12,7 +12,6 @@ import {
 } from "@/components/icons";
 import { EmptyState } from "@/components/common/empty-state";
 import { Pagination } from "@/components/common/pagination";
-import { MOCK_ACTIVITY } from "@/lib/mock-data";
 import { api } from "@/lib/api";
 import { formatRelativeTime, cn } from "@/lib/utils";
 import type { ActivityItem } from "@/lib/types";
@@ -40,11 +39,13 @@ const TONE_MAP: Record<ActivityItem["icon"], string> = {
 };
 
 export default function ActivityPage() {
-  const [activity, setActivity] = useState<ActivityItem[]>(MOCK_ACTIVITY);
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadBackendActivity() {
+      setLoading(true);
       try {
         const tasks = await api.getTasks();
         const liveItems: ActivityItem[] = [];
@@ -71,12 +72,15 @@ export default function ActivityPage() {
         });
 
         if (liveItems.length > 0) {
-          // Sort reverse chronologically
           liveItems.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-          setActivity([...liveItems.slice(0, 30), ...MOCK_ACTIVITY]);
+          setActivity(liveItems);
+        } else {
+          setActivity([]);
         }
       } catch (err) {
         console.warn("Could not load backend logs for activity", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadBackendActivity();

@@ -1,15 +1,14 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import { ShipLogIcon, SpyglassIcon } from "@/components/icons";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/common/empty-state";
 import { Pagination } from "@/components/common/pagination";
-import { MOCK_DATASETS } from "@/lib/mock-data";
 import { api } from "@/lib/api";
 import { formatNumber, formatDate } from "@/lib/utils";
 import type { Dataset } from "@/lib/types";
@@ -18,69 +17,73 @@ const PAGE_SIZE = 6;
 
 export default function DatasetsPage() {
   const [query, setQuery] = useState("");
-  const [datasets, setDatasets] = useState<Dataset[]>(MOCK_DATASETS);
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadDatasets() {
-      try {
-        const tasks = await api.getTasks();
-        if (tasks && tasks.length > 0) {
-          const liveDatasets: Dataset[] = tasks
-            .filter((t) => t.status === "COMPLETED")
-            .map((t) => ({
-              id: t.id,
-              workflowId: t.id,
-              name: t.workflowPlan?.targetEntityType || t.userPrompt.slice(0, 48),
-              description: t.workflowPlan?.intentSummary || `Extracted dataset: ${t.userPrompt}`,
-              recordCount: t.totalRecords || 0,
-              sourceCount: t.workflowPlan?.permittedDomains?.length || 4,
-              status: "ready",
-              createdAt: t.completedAt || t.createdAt,
-              updatedAt: t.completedAt || t.createdAt,
-              fields:
-                t.workflowPlan?.schema?.map((s) => ({
-                  name: s.name,
-                  type: s.type === "number" ? "number" : "text",
-                  required: s.required,
-                })) || [],
-              rows: [],
-            }));
+    let cancelled = false;
 
-          const combined = [
-            ...liveDatasets,
-            ...MOCK_DATASETS.filter((md) => !liveDatasets.some((ld) => ld.id === md.id)),
-          ];
-          setDatasets(combined);
+    async function loadDatasets() {
+      setLoading(true);
+      try {
+        const pageResult = await api.getTasksPage({
+          page: page - 1,
+          size: PAGE_SIZE,
+          status: "COMPLETED",
+          q: query.trim() || undefined,
+        });
+
+        if (!cancelled) {
+          const liveDatasets: Dataset[] = pageResult.content.map((t) => ({
+            id: t.id,
+            workflowId: t.id,
+            name: t.workflowPlan?.targetEntityType || t.userPrompt.slice(0, 48),
+            description: t.workflowPlan?.intentSummary || `Extracted dataset: ${t.userPrompt}`,
+            recordCount: t.totalRecords || 0,
+            sourceCount: t.workflowPlan?.permittedDomains?.length || 4,
+            status: "ready",
+            createdAt: t.completedAt || t.createdAt,
+            updatedAt: t.completedAt || t.createdAt,
+            fields:
+              t.workflowPlan?.schema?.map((s) => ({
+                name: s.name,
+                type: s.type === "number" ? "number" : "text",
+                required: s.required,
+              })) || [],
+            rows: [],
+          }));
+
+          setDatasets(liveDatasets);
+          setTotalPages(Math.max(1, pageResult.totalPages));
+          setTotalElements(pageResult.totalElements);
         }
       } catch (err) {
-        console.warn("Could not load backend datasets, using mock data", err);
+        console.warn("Could not load backend datasets:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
+
     loadDatasets();
-  }, []);
-
-  const filtered = useMemo(
-    () => datasets.filter((d) => d.name.toLowerCase().includes(query.toLowerCase())),
-    [datasets, query]
-  );
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const pagedDatasets = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    return () => {
+      cancelled = true;
+    };
+  }, [page, query]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this dataset?")) return;
     try {
-      if (id.includes("-")) {
-        await api.deleteTask(id);
-      }
+      await api.deleteTask(id);
       setDatasets((prev) => prev.filter((d) => d.id !== id));
-      if (pagedDatasets.length === 1 && page > 1) {
+      setTotalElements((prev) => Math.max(0, prev - 1));
+      if (datasets.length === 1 && page > 1) {
         setPage(page - 1);
       }
     } catch (err) {
       console.warn("Could not delete dataset", err);
-      setDatasets((prev) => prev.filter((d) => d.id !== id));
     }
   }
 
@@ -115,16 +118,24 @@ export default function DatasetsPage() {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {loading && datasets.length === 0 ? (
+        <div className="flex justify-center py-16">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : datasets.length === 0 ? (
         <EmptyState
           icon={ShipLogIcon}
           title="No datasets yet"
-          description="Completed research missions will store verified records here."
+          description={
+            query
+              ? "No datasets match your search query."
+              : "Completed research missions will store verified records here."
+          }
         />
       ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-3">
-            {pagedDatasets.map((d, i) => (
+            {datasets.map((d, i) => (
               <motion.div
                 key={d.id}
                 initial={{ opacity: 0, y: 8 }}
@@ -174,7 +185,7 @@ export default function DatasetsPage() {
           <Pagination
             page={page}
             totalPages={totalPages}
-            totalItems={filtered.length}
+            totalItems={totalElements}
             pageSize={PAGE_SIZE}
             onPageChange={setPage}
             itemName="datasets"

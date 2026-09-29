@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { WorkflowRunView } from "@/components/workflow/workflow-run-view";
 import { useWorkflowSimulation } from "@/hooks/use-workflow-simulation";
-import { pickDatasetForEntity } from "@/lib/mock-data";
 import { api, mapBackendStatus, computeStages, BackendTask } from "@/lib/api";
 import type { DataContract } from "@/lib/types";
 
@@ -79,6 +78,15 @@ function LiveWorkflowInner() {
     );
   }
 
+  if (activeTaskId && !liveTask) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-3">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <p className="text-[14px] text-muted-foreground font-medium">Connecting to AI Intelligence Engine...</p>
+      </div>
+    );
+  }
+
   // If we have live backend task data
   if (liveTask) {
     const stages = computeStages(liveTask.status);
@@ -107,16 +115,13 @@ function LiveWorkflowInner() {
     );
   }
 
-  // If we don't have a backend task, fall back to simulation
   if (!request) {
     return (
-      <div className="flex justify-center py-16">
-        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      <div className="flex flex-col items-center justify-center py-20 space-y-3">
+        <p className="text-[14px] text-muted-foreground font-medium">No active research mission found.</p>
       </div>
     );
   }
-
-  const datasetId = pickDatasetForEntity(request.contract?.entity || "");
 
   return (
     <WorkflowRunView
@@ -131,7 +136,7 @@ function LiveWorkflowInner() {
       sourcesProcessed={sim.sourcesProcessed}
       sourcesTotal={sim.sourcesTotal}
       log={sim.log}
-      datasetId={sim.status === "completed" ? datasetId : undefined}
+      datasetId={sim.status === "completed" && request.taskId ? request.taskId : undefined}
       isLive
       onPause={sim.pause}
       onResume={sim.resume}

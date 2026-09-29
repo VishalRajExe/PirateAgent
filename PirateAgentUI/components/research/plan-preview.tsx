@@ -12,9 +12,18 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { STAGE_TEMPLATE } from "@/lib/mock-data";
 import type { DataContract } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+const DEFAULT_WORKFLOW_STEPS = [
+  "Mission Analysis & Dynamic Schema Synthesis",
+  "Target Query & Source Strategy Planning",
+  "Tavily Deep Web Source Ingestion",
+  "Gemini Structured Extraction & Attribution",
+  "Schema Quality & Type Enforcement",
+  "Entity Deduplication & Confidence Scoring",
+  "Dataset Persistence & Delivery",
+];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 8 },
@@ -138,7 +147,7 @@ export function PlanPreview({
           <CardContent className="p-5">
             <SectionLabel icon={TreasureMapIcon} text="Workflow steps" />
             <ol className="mt-3 space-y-2">
-              {(contract.workflowSteps ?? STAGE_TEMPLATE.map((s) => s.label)).map((step, i) => (
+              {(contract.workflowSteps ?? DEFAULT_WORKFLOW_STEPS).map((step, i) => (
                 <li key={step} className="flex items-center gap-2.5 text-[13px] text-muted-foreground">
                   <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-[11px] font-semibold text-foreground")}>
                     {i + 1}

@@ -11,7 +11,6 @@ import { PromptBox } from "@/components/dashboard/prompt-box";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { RecentWorkflows } from "@/components/dashboard/recent-workflows";
 import { RecentDatasets } from "@/components/dashboard/recent-datasets";
-import { MOCK_WORKFLOWS, MOCK_DATASETS } from "@/lib/mock-data";
 import { api, taskToWorkflow } from "@/lib/api";
 import { formatNumber } from "@/lib/utils";
 import type { Workflow, Dataset } from "@/lib/types";
@@ -26,8 +25,9 @@ const item = {
 };
 
 export default function DashboardPage() {
-  const [workflows, setWorkflows] = useState<Workflow[]>(MOCK_WORKFLOWS);
-  const [datasets, setDatasets] = useState<Dataset[]>(MOCK_DATASETS);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadBackendData() {
@@ -35,11 +35,7 @@ export default function DashboardPage() {
         const tasks = await api.getTasks();
         if (tasks && tasks.length > 0) {
           const liveWorkflows = tasks.map(taskToWorkflow);
-          const combinedWorkflows = [
-            ...liveWorkflows,
-            ...MOCK_WORKFLOWS.filter((mw) => !liveWorkflows.some((lw) => lw.id === mw.id)),
-          ];
-          setWorkflows(combinedWorkflows);
+          setWorkflows(liveWorkflows);
 
           const liveDatasets: Dataset[] = tasks
             .filter((t) => t.status === "COMPLETED")
@@ -47,7 +43,7 @@ export default function DashboardPage() {
               id: t.id,
               workflowId: t.id,
               name: t.workflowPlan?.targetEntityType || t.userPrompt.slice(0, 40),
-              description: `Extracted dataset: ${t.userPrompt}`,
+              description: t.workflowPlan?.intentSummary || `Extracted dataset: ${t.userPrompt}`,
               recordCount: t.totalRecords || 0,
               sourceCount: t.workflowPlan?.permittedDomains?.length || 4,
               status: "ready",
@@ -62,15 +58,15 @@ export default function DashboardPage() {
               rows: [],
             }));
 
-          if (liveDatasets.length > 0) {
-            setDatasets([
-              ...liveDatasets,
-              ...MOCK_DATASETS.filter((md) => !liveDatasets.some((ld) => ld.id === md.id)),
-            ]);
-          }
+          setDatasets(liveDatasets);
+        } else {
+          setWorkflows([]);
+          setDatasets([]);
         }
       } catch (err) {
-        console.warn("Could not load backend tasks, using mock data", err);
+        console.warn("Could not load backend tasks:", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadBackendData();

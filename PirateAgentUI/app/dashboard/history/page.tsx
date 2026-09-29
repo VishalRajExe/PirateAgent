@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState } from "@/components/common/empty-state";
 import { Pagination } from "@/components/common/pagination";
-import { MOCK_WORKFLOWS } from "@/lib/mock-data";
 import { api, taskToWorkflow } from "@/lib/api";
 import { formatDate, formatNumber } from "@/lib/utils";
 import type { Workflow } from "@/lib/types";
@@ -23,25 +22,27 @@ function formatDuration(sec?: number) {
 
 export default function HistoryPage() {
   const router = useRouter();
-  const [workflows, setWorkflows] = useState<Workflow[]>(MOCK_WORKFLOWS);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [rerunningId, setRerunningId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadTasks() {
+      setLoading(true);
       try {
         const tasks = await api.getTasks();
         if (tasks && tasks.length > 0) {
           const liveWorkflows = tasks.map(taskToWorkflow);
-          const combined = [
-            ...liveWorkflows,
-            ...MOCK_WORKFLOWS.filter((mw) => !liveWorkflows.some((lw) => lw.id === mw.id)),
-          ];
-          setWorkflows(combined);
+          setWorkflows(liveWorkflows);
+        } else {
+          setWorkflows([]);
         }
       } catch (err) {
         console.warn("Could not load backend tasks for history", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadTasks();

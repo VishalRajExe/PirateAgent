@@ -8,7 +8,14 @@ import type {
   DataField,
   SourceRecord,
 } from "./types";
-import { MOCK_WORKFLOWS, MOCK_DATASETS } from "./mock-data";
+
+export interface BackendTaskPage {
+  content: BackendTask[];
+  totalElements: number;
+  totalPages: number;
+  page: number;
+  size: number;
+}
 
 export interface BackendFieldDefinition {
   name: string;
@@ -266,13 +273,55 @@ export const api = {
     return res.json();
   },
 
-  async getTasks(): Promise<BackendTask[]> {
+  async getTasks(params?: {
+    page?: number;
+    size?: number;
+    status?: string;
+    q?: string;
+  }): Promise<BackendTask[]> {
     try {
-      const res = await fetch(`${API_BASE}/tasks`);
+      const search = new URLSearchParams();
+      if (params?.page !== undefined) search.set("page", String(params.page));
+      if (params?.size !== undefined) search.set("size", String(params.size));
+      if (params?.status && params.status !== "all") search.set("status", params.status);
+      if (params?.q) search.set("q", params.q);
+
+      const query = search.toString();
+      const res = await fetch(`${API_BASE}/tasks${query ? `?${query}` : ""}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.content)) return data.content;
+      return [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getTasksPage(params: {
+    page: number;
+    size: number;
+    status?: string;
+    q?: string;
+  }): Promise<BackendTaskPage> {
+    try {
+      const search = new URLSearchParams();
+      search.set("page", String(params.page));
+      search.set("size", String(params.size));
+      if (params.status && params.status !== "all") search.set("status", params.status);
+      if (params.q) search.set("q", params.q);
+
+      const res = await fetch(`${API_BASE}/tasks?${search.toString()}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch {
-      return [];
+      return {
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        page: params.page,
+        size: params.size,
+      };
     }
   },
 

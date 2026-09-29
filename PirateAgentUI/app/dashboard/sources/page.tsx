@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/common/empty-state";
-import { MOCK_SOURCES, MOCK_DATASET_ROWS } from "@/lib/mock-data";
 import { api } from "@/lib/api";
 import { formatRelativeTime } from "@/lib/utils";
 import type { SourceRecord, DatasetRow } from "@/lib/types";
@@ -23,11 +22,13 @@ export default function SourcesPage() {
   const [page, setPage] = useState(1);
   const [active, setActive] = useState<SourceRecord | null>(null);
   const [open, setOpen] = useState(false);
-  const [sources, setSources] = useState<SourceRecord[]>(MOCK_SOURCES);
-  const [allRows, setAllRows] = useState<DatasetRow[]>(MOCK_DATASET_ROWS);
+  const [sources, setSources] = useState<SourceRecord[]>([]);
+  const [allRows, setAllRows] = useState<DatasetRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadBackendSources() {
+      setLoading(true);
       try {
         const tasks = await api.getTasks();
         const completedTasks = tasks.filter((t) => t.status === "COMPLETED");
@@ -73,16 +74,12 @@ export default function SourcesPage() {
           })
         );
 
-        if (collectedSources.length > 0) {
-          const combined = [
-            ...collectedSources,
-            ...MOCK_SOURCES.filter((ms) => !collectedSources.some((cs) => cs.domain === ms.domain)),
-          ];
-          setSources(combined);
-          setAllRows([...collectedRows, ...MOCK_DATASET_ROWS]);
-        }
+        setSources(collectedSources);
+        setAllRows(collectedRows);
       } catch (err) {
         console.warn("Could not load backend sources", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadBackendSources();

@@ -3,8 +3,10 @@ package com.dataintelligence.controller;
 import com.dataintelligence.dto.DatasetDetailResponse;
 import com.dataintelligence.dto.TaskCreateRequest;
 import com.dataintelligence.dto.TaskDetailResponse;
+import com.dataintelligence.exception.ResourceNotFoundException;
 import com.dataintelligence.service.ExportService;
 import com.dataintelligence.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +28,44 @@ public class DataIntelligenceController {
         this.exportService = exportService;
     }
 
+    // --- Task CRUD ---
+
     @PostMapping("/tasks")
     public ResponseEntity<TaskDetailResponse> createTask(@RequestBody TaskCreateRequest request) {
         if (request.getPrompt() == null || request.getPrompt().isBlank()) {
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException("Prompt cannot be empty or blank");
         }
         TaskDetailResponse task = taskService.createTask(request);
         return ResponseEntity.ok(task);
     }
 
+    /**
+     * GET /api/tasks
+     *   ?page=0&size=10  → paginated (server-side)
+     *   ?status=COMPLETED → filter by status (PENDING|PLANNING|SEARCHING|EXTRACTING|DEDUPLICATING|COMPLETED|FAILED)
+     *   ?q=ramen          → full-text search on userPrompt
+     *
+     * Backwards-compatible: omit all params → returns all tasks (legacy).
+     */
     @GetMapping("/tasks")
-    public ResponseEntity<List<TaskDetailResponse>> getAllTasks() {
+    public ResponseEntity<?> getAllTasks(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String status,
+            @RequestParam(required = false, defaultValue = "") String q
+    ) {
+        if (page != null) {
+            // Paginated mode
+            Page<TaskDetailResponse> pageResult = taskService.getTasksPaginated(page, size, status, q);
+            return ResponseEntity.ok(Map.of(
+                    "content", pageResult.getContent(),
+                    "totalElements", pageResult.getTotalElements(),
+                    "totalPages", pageResult.getTotalPages(),
+                    "page", pageResult.getNumber(),
+                    "size", pageResult.getSize()
+            ));
+        }
+        // Legacy flat list mode — still supported for backwards compatibility
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
@@ -44,14 +73,14 @@ public class DataIntelligenceController {
     public ResponseEntity<TaskDetailResponse> getTaskById(@PathVariable String id) {
         return taskService.getTaskById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + id));
     }
 
     @GetMapping("/tasks/{id}/dataset")
     public ResponseEntity<DatasetDetailResponse> getDatasetByTaskId(@PathVariable String id) {
         return taskService.getDatasetByTaskId(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Dataset not found for task: " + id));
     }
 
     @PostMapping("/tasks/{id}/rerun")
@@ -62,8 +91,11 @@ public class DataIntelligenceController {
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable String id) {
         boolean deleted = taskService.deleteTask(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if (!deleted) throw new ResourceNotFoundException("Task not found: " + id);
+        return ResponseEntity.noContent().build();
     }
+
+    // --- Export ---
 
     @GetMapping("/tasks/{id}/export")
     public ResponseEntity<byte[]> exportDataset(
@@ -84,6 +116,8 @@ public class DataIntelligenceController {
                     .body(csv.getBytes());
         }
     }
+
+    // --- Templates ---
 
     @GetMapping("/templates")
     public ResponseEntity<List<Map<String, String>>> getPresetTemplates() {
@@ -121,6 +155,8 @@ public class DataIntelligenceController {
         );
         return ResponseEntity.ok(templates);
     }
+
+    // --- Health ---
 
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> getHealth() {

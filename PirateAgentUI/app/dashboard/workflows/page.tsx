@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Loader2 } from "lucide-react";
 import { TreasureMapIcon, SpyglassIcon, SailingShipIcon } from "@/components/icons";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +12,6 @@ import { StatusBadge } from "@/components/common/status-badge";
 import { EmptyState } from "@/components/common/empty-state";
 import { Progress } from "@/components/ui/progress";
 import { Pagination } from "@/components/common/pagination";
-import { MOCK_WORKFLOWS } from "@/lib/mock-data";
 import { api, taskToWorkflow } from "@/lib/api";
 import { formatNumber, formatRelativeTime } from "@/lib/utils";
 import type { Workflow, WorkflowStatus } from "@/lib/types";
@@ -31,54 +30,55 @@ export default function WorkflowsPage() {
   const router = useRouter();
   const [filter, setFilter] = useState<"all" | WorkflowStatus>("all");
   const [query, setQuery] = useState("");
-  const [workflows, setWorkflows] = useState<Workflow[]>(MOCK_WORKFLOWS);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadTasks() {
+    let cancelled = false;
+
+    async function loadServerTasks() {
+      setLoading(true);
       try {
-        const tasks = await api.getTasks();
-        if (tasks && tasks.length > 0) {
-          const liveWorkflows = tasks.map(taskToWorkflow);
-          const combined = [
-            ...liveWorkflows,
-            ...MOCK_WORKFLOWS.filter((mw) => !liveWorkflows.some((lw) => lw.id === mw.id)),
-          ];
-          setWorkflows(combined);
+        const pageResult = await api.getTasksPage({
+          page: page - 1,
+          size: PAGE_SIZE,
+          status: filter === "all" ? undefined : filter.toUpperCase(),
+          q: query.trim() || undefined,
+        });
+
+        if (!cancelled) {
+          const mapped = pageResult.content.map(taskToWorkflow);
+          setWorkflows(mapped);
+          setTotalPages(Math.max(1, pageResult.totalPages));
+          setTotalElements(pageResult.totalElements);
         }
       } catch (err) {
-        console.warn("Could not load backend tasks, using mock data", err);
+        console.warn("Could not load backend tasks:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
-    loadTasks();
-  }, []);
 
-  const filtered = useMemo(() => {
-    return workflows.filter((w) => {
-      const matchesFilter = filter === "all" || w.status === filter;
-      const matchesQuery =
-        w.name.toLowerCase().includes(query.toLowerCase()) ||
-        w.prompt.toLowerCase().includes(query.toLowerCase());
-      return matchesFilter && matchesQuery;
-    });
-  }, [workflows, filter, query]);
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const pagedWorkflows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    loadServerTasks();
+    return () => {
+      cancelled = true;
+    };
+  }, [page, filter, query]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this workflow?")) return;
     try {
-      if (id.includes("-")) {
-        await api.deleteTask(id);
-      }
+      await api.deleteTask(id);
       setWorkflows((prev) => prev.filter((w) => w.id !== id));
-      if (pagedWorkflows.length === 1 && page > 1) {
+      setTotalElements((prev) => Math.max(0, prev - 1));
+      if (workflows.length === 1 && page > 1) {
         setPage(page - 1);
       }
     } catch (err) {
       console.warn("Could not delete task", err);
-      setWorkflows((prev) => prev.filter((w) => w.id !== id));
     }
   }
 
@@ -138,16 +138,24 @@ export default function WorkflowsPage() {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {loading && workflows.length === 0 ? (
+        <div className="flex justify-center py-16">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : workflows.length === 0 ? (
         <EmptyState
           icon={SailingShipIcon}
           title="No voyages found"
-          description="Try a different filter or initiate a new research mission."
+          description={
+            query || filter !== "all"
+              ? "No workflows match your search or filter criteria."
+              : "No workflows initiated yet. Click 'New research' above to start your first mission."
+          }
         />
       ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
-            {pagedWorkflows.map((w, i) => (
+            {workflows.map((w, i) => (
               <motion.div
                 key={w.id}
                 initial={{ opacity: 0, y: 8 }}
@@ -156,7 +164,7 @@ export default function WorkflowsPage() {
               >
                 <Link
                   href={
-                    w.status === "running"
+                    w.status === "running" || w.status === "planning"
                       ? `/dashboard/workflows/live?taskId=${w.id}`
                       : `/dashboard/workflows/${w.id}`
                   }
@@ -203,7 +211,7 @@ export default function WorkflowsPage() {
           <Pagination
             page={page}
             totalPages={totalPages}
-            totalItems={filtered.length}
+            totalItems={totalElements}
             pageSize={PAGE_SIZE}
             onPageChange={setPage}
             itemName="workflows"

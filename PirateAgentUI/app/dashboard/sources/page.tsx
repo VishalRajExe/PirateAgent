@@ -16,6 +16,7 @@ import { Pagination } from "@/components/common/pagination";
 
 const PAGE_SIZE = 8;
 const RELIABILITY_TONE = { high: "text-success", medium: "text-warning", low: "text-danger" } as const;
+const RELIABILITY_ICON = { high: ShieldCheck, medium: ShieldAlert, low: ShieldX } as const;
 
 export default function SourcesPage() {
   const [query, setQuery] = useState("");

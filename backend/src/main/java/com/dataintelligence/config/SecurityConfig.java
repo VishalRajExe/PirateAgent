@@ -44,7 +44,7 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // for H2 console
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/health", "/api/templates", "/h2-console/**", "/error", "/").permitAll()
+                .requestMatchers("/health", "/api/health", "/api/templates", "/h2-console/**", "/error", "/").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new UserAuthFilter(apiKey), UsernamePasswordAuthenticationFilter.class)

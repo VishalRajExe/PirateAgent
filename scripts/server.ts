@@ -312,6 +312,13 @@ async function main() {
       return;
     }
 
+    // Lightweight public health check for keep-alive monitoring (e.g. UptimeRobot)
+    if (urlPath === "/health") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: "ok" }));
+      return;
+    }
+
     // Proxy all other routes (/ok, /threads, /runs, /docs, etc.) to internal LangGraph
     const proxyReq = http.request(
       {

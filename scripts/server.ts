@@ -261,14 +261,15 @@ const LANDING_PAGE_HTML = `<!DOCTYPE html>
 
 async function main() {
   const [pid] = await createIpcServer();
-  const host = process.env.HOST || "127.0.0.1";
+  const internalHost = "127.0.0.1";
+  const publicHost = process.env.HOST || "0.0.0.0";
   const publicPort = parseInt(process.env.PORT || "2024", 10);
   const internalPort = publicPort + 1; // 2025
 
-  console.log(`Starting LangGraph internal server on http://${host}:${internalPort}...`);
+  console.log(`Starting LangGraph internal server on http://${internalHost}:${internalPort}...`);
 
   const child = await spawnServer(
-    { host, port: String(internalPort), nJobsPerWorker: "1", reload: false },
+    { host: internalHost, port: String(internalPort), nJobsPerWorker: "1", reload: false },
     {
       config: {
         graphs: { agent: "./src/enrichment_agent/graph.ts:graph" },
@@ -285,7 +286,7 @@ async function main() {
     process.exit(code || 0);
   });
 
-  // Create public gateway server on 2024
+  // Create public gateway server on publicPort
   const gateway = http.createServer((req, res) => {
     const urlPath = req.url?.split("?")[0] || "/";
 
@@ -299,8 +300,8 @@ async function main() {
             status: "ok",
             service: "PirateAgent LangGraph Agent Engine",
             graph: "agent",
-            studio_url: `https://smith.langchain.com/studio?baseUrl=http://${host}:${publicPort}`,
-            health_url: `http://${host}:${publicPort}/ok`,
+            studio_url: `https://smith.langchain.com/studio?baseUrl=http://${publicHost === "0.0.0.0" ? "127.0.0.1" : publicHost}:${publicPort}`,
+            health_url: `http://${publicHost === "0.0.0.0" ? "127.0.0.1" : publicHost}:${publicPort}/ok`,
           })
         );
         return;
@@ -314,7 +315,7 @@ async function main() {
     // Proxy all other routes (/ok, /threads, /runs, /docs, etc.) to internal LangGraph
     const proxyReq = http.request(
       {
-        host,
+        host: internalHost,
         port: internalPort,
         path: req.url,
         method: req.method,
@@ -337,7 +338,7 @@ async function main() {
   // Support WebSockets proxying
   gateway.on("upgrade", (req, socket, head) => {
     const proxyReq = http.request({
-      host,
+      host: internalHost,
       port: internalPort,
       path: req.url,
       method: req.method,
@@ -359,9 +360,9 @@ async function main() {
     proxyReq.end();
   });
 
-  gateway.listen(publicPort, host, () => {
-    console.log(`🚀 LangGraph gateway ready at http://${host}:${publicPort}`);
-    console.log(`🎨 Studio UI: https://smith.langchain.com/studio?baseUrl=http://${host}:${publicPort}`);
+  gateway.listen(publicPort, publicHost, () => {
+    console.log(`🚀 LangGraph gateway ready at http://${publicHost}:${publicPort}`);
+    console.log(`🎨 Studio UI: https://smith.langchain.com/studio?baseUrl=http://${publicHost === "0.0.0.0" ? "127.0.0.1" : publicHost}:${publicPort}`);
   });
 
   const cleanup = () => {

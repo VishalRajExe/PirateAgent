@@ -1,0 +1,56 @@
+services:
+  # ----------------------------------------------------------------------
+  # Service 1: LangGraph Agent Engine (Port 2024)
+  # ----------------------------------------------------------------------
+  - type: web
+    name: pirate-langgraph
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /ok
+    envVars:
+      - key: PORT
+        value: "2024"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: LANGCHAIN_PROJECT
+        value: "data-enrichment"
+
+  # ----------------------------------------------------------------------
+  # Service 2: Spring Boot Backend Orchestration API (Port 8080)
+  # ----------------------------------------------------------------------
+  - type: web
+    name: pirate-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: SPRING_PROFILES_ACTIVE
+        value: "prod"
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        value: "defaultdb"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: LANGGRAPH_BASE_URL
+        sync: false
